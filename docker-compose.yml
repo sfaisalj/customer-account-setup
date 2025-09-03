@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  identity-service:
+    build:
+      context: ./services/IdentityService
+      dockerfile: IdentityService.GraphQL/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - customer-account-network
+
+  config-store-service:
+    build:
+      context: ./services/ConfigStoreService
+      dockerfile: ConfigStoreService.GraphQL/Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - customer-account-network
+
+  email-marketing-service:
+    build:
+      context: ./services/EmailMarketingService
+      dockerfile: EmailMarketingService.GraphQL/Dockerfile
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - customer-account-network
+
+  video-conferencing-service:
+    build:
+      context: ./services/VideoConferencingService
+      dockerfile: VideoConferencingService.GraphQL/Dockerfile
+    ports:
+      - "5004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - customer-account-network
+
+  federation-gateway:
+    build:
+      context: ./gateway/federation-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    environment:
+      - NODE_ENV=development
+      - PORT=5005
+      - IDENTITY_SERVICE_URL=http://identity-service:80/graphql
+      - CONFIG_STORE_SERVICE_URL=http://config-store-service:80/graphql
+      - EMAIL_MARKETING_SERVICE_URL=http://email-marketing-service:80/graphql
+      - VIDEO_CONFERENCING_SERVICE_URL=http://video-conferencing-service:80/graphql
+      - APOLLO_CONFIG_HOME=/app/
+      - APOLLO_ELV2_LICENSE=accept
+    depends_on:
+      - identity-service
+      - config-store-service
+      - email-marketing-service
+      - video-conferencing-service
+    networks:
+      - customer-account-network
+
+  account-setup-ui:
+    build:
+      context: ./client/account-setup
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - federation-gateway
+    networks:
+      - customer-account-network
+
+networks:
+  customer-account-network:
+    driver: bridge

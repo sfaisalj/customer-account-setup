@@ -1,0 +1,233 @@
+<div class="setup-container">
+  <div class="setup-card">
+    <div class="header">
+      <h1>Account Setup</h1>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+
+    <div class="progress-bar">
+      <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-number">1</div>
+        <div class="step-label">Email Marketing</div>
+      </div>
+      <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-number">2</div>
+        <div class="step-label">Video Conferencing</div>
+      </div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <div class="step-number">3</div>
+        <div class="step-label">Summary</div>
+      </div>
+    </div>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <!-- Step 1: Email Marketing Setup -->
+    <div *ngIf="currentStep === 1" class="step-content">
+      <h2>Email Marketing Configuration</h2>
+      <form #emailForm="ngForm">
+        <div class="form-group">
+          <label for="emailDeliveryInfra">Email Delivery Provider</label>
+          <select
+            id="emailDeliveryInfra"
+            name="emailDeliveryInfra"
+            [(ngModel)]="emailConfig.emailDeliveryInfra"
+            required
+            [disabled]="loading"
+          >
+            <option *ngFor="let provider of emailProviders" [value]="provider">{{ provider }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="emailTemplate">Email Template</label>
+          <input
+            type="text"
+            id="emailTemplate"
+            name="emailTemplate"
+            [(ngModel)]="emailConfig.emailTemplate"
+            placeholder="e.g., welcome-template"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="analytics">Analytics Provider</label>
+          <input
+            type="text"
+            id="analytics"
+            name="analytics"
+            [(ngModel)]="emailConfig.analytics"
+            placeholder="e.g., google-analytics"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="abTesting">A/B Testing Tool</label>
+          <input
+            type="text"
+            id="abTesting"
+            name="abTesting"
+            [(ngModel)]="emailConfig.abTesting"
+            placeholder="e.g., optimizely"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="button-group">
+          <button 
+            type="button" 
+            class="btn-primary"
+            (click)="nextStep()"
+            [disabled]="loading || !emailForm.valid"
+          >
+            {{ loading ? 'Saving...' : 'Save and Next' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step 2: Video Conferencing Setup -->
+    <div *ngIf="currentStep === 2" class="step-content">
+      <h2>Video Conferencing Configuration</h2>
+      <form #videoForm="ngForm">
+        <div class="form-group">
+          <label for="calendarIntegration">Calendar Integration</label>
+          <select
+            id="calendarIntegration"
+            name="calendarIntegration"
+            [(ngModel)]="videoConfig.calendarIntegration"
+            required
+            [disabled]="loading"
+          >
+            <option *ngFor="let calendar of calendarOptions" [value]="calendar">{{ calendar }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="videoConferencingProvider">Video Conferencing Provider</label>
+          <select
+            id="videoConferencingProvider"
+            name="videoConferencingProvider"
+            [(ngModel)]="videoConfig.videoConferencingProvider"
+            required
+            [disabled]="loading"
+          >
+            <option *ngFor="let provider of videoProviders" [value]="provider">{{ provider }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="bandwidthOptimization">Bandwidth Optimization</label>
+          <select
+            id="bandwidthOptimization"
+            name="bandwidthOptimization"
+            [(ngModel)]="videoConfig.bandwidthOptimization"
+            required
+            [disabled]="loading"
+          >
+            <option *ngFor="let option of bandwidthOptions" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="screenSharing"
+              [(ngModel)]="videoConfig.screenSharing"
+              [disabled]="loading"
+            />
+            Enable Screen Sharing
+          </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label>
+            <input
+              type="checkbox"
+              name="transcriptionService"
+              [(ngModel)]="videoConfig.transcriptionService"
+              [disabled]="loading"
+            />
+            Enable Transcription Service
+          </label>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="loading">
+            Previous
+          </button>
+          <button 
+            type="button" 
+            class="btn-primary"
+            (click)="nextStep()"
+            [disabled]="loading || !videoForm.valid"
+          >
+            {{ loading ? 'Saving...' : 'Save and Next' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step 3: Summary -->
+    <div *ngIf="currentStep === 3" class="step-content">
+      <h2>Configuration Summary</h2>
+      
+      <div class="summary-section">
+        <h3>Email Marketing Configuration</h3>
+        <div class="summary-item">
+          <span class="label">Email Delivery Provider:</span>
+          <span class="value">{{ emailConfig.emailDeliveryInfra }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Email Template:</span>
+          <span class="value">{{ emailConfig.emailTemplate }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Analytics:</span>
+          <span class="value">{{ emailConfig.analytics }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">A/B Testing:</span>
+          <span class="value">{{ emailConfig.abTesting }}</span>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <h3>Video Conferencing Configuration</h3>
+        <div class="summary-item">
+          <span class="label">Calendar Integration:</span>
+          <span class="value">{{ videoConfig.calendarIntegration }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Video Provider:</span>
+          <span class="value">{{ videoConfig.videoConferencingProvider }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Bandwidth Optimization:</span>
+          <span class="value">{{ videoConfig.bandwidthOptimization }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Screen Sharing:</span>
+          <span class="value">{{ videoConfig.screenSharing ? 'Enabled' : 'Disabled' }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Transcription Service:</span>
+          <span class="value">{{ videoConfig.transcriptionService ? 'Enabled' : 'Disabled' }}</span>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn-secondary" (click)="prevStep()">Previous</button>
+        <button type="button" class="btn-primary" (click)="commitConfiguration()">
+          Commit Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

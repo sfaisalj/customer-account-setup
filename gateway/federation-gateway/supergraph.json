@@ -1,0 +1,25 @@
+{
+    "federation_version": "=2",
+    "subgraphs": {
+      "identity": {
+        "schema": {
+          "subgraph_url": "http://identity-service:80/graphql"
+        }
+      },
+      "config-store": {
+        "schema": {
+          "subgraph_url": "http://config-store-service:80/graphql"
+        }
+      },
+      "email-marketing": {
+        "schema": {
+          "subgraph_url": "http://email-marketing-service:80/graphql"
+        }
+      },
+      "video-conferencing": {
+        "schema": {
+          "subgraph_url": "http://video-conferencing-service:80/graphql"
+        }
+      }
+    }
+  }
